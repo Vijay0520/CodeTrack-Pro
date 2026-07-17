@@ -1,168 +1,191 @@
+import { useEffect, useState } from "react";
 import MainLayout from "../components/layout/MainLayout";
 import ProblemTable from "../components/problem/ProblemTable";
-import { useState } from "react";
 import AddProblemModal from "../components/problem/AddProblemModal";
+import API from "../api/axios";
+
 function Problems() {
+  const [showModal, setShowModal] = useState(false);
+  const [editingProblem, setEditingProblem] = useState(null);
 
-    const [showModal,setShowModal]=useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [difficultyFilter, setDifficultyFilter] = useState("All");
-    const [editingProblem, setEditingProblem] = useState(null);
-    const [problems,setProblems]=useState([
-        {
-            id: 1,
-    name: "Two Sum",
-    difficulty: "Easy",
-    status: "Solved",
-    link: "https://leetcode.com/problems/two-sum/",
-        },
-        {
-             id: 2,
-    name: "Merge Two Sorted Lists",
-    difficulty: "Medium",
-    status: "Pending",
-    link: "https://leetcode.com/problems/merge-two-sorted-lists/",
-        },
-    ]);
-    const [sortBy, setSortBy] = useState("Newest");
+  const [problems, setProblems] = useState([]);
 
-    const addProblem = (newProblem) => {
-  setProblems((prevProblems) => [
-    ...prevProblems,
-    {
-      id: Date.now(),
-      ...newProblem,
-    },
-  ]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [difficultyFilter, setDifficultyFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("Newest");
 
-  setShowModal(false);
-};
+  useEffect(() => {
+    fetchProblems();
+  }, []);
 
-const updateProblem = (updatedProblem) => {
-  setProblems((prevProblems) =>
-    prevProblems.map((problem) =>
-      problem.id === updatedProblem.id ? updatedProblem : problem
-    )
-  );
-
-  setEditingProblem(null);
-  setShowModal(false);
-};
-const deleteProblem = (id) => {
-  setProblems((prevProblems) =>
-    prevProblems.filter((problem) => problem.id !== id)
-  );
-};
-
-const editProblem = (problem) => {
-  setEditingProblem(problem);
-  setShowModal(true);
-};
-
-const filteredProblems = [...problems]
-  .filter((problem) => {
-    const matchesSearch = problem.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
-    const matchesDifficulty =
-      difficultyFilter === "All" ||
-      problem.difficulty === difficultyFilter;
-
-    return matchesSearch && matchesDifficulty;
-  })
-  .sort((a, b) => {
-    switch (sortBy) {
-      case "Newest":
-        return b.id - a.id;
-
-      case "Oldest":
-        return a.id - b.id;
-
-      case "A-Z":
-        return a.name.localeCompare(b.name);
-
-      case "Z-A":
-        return b.name.localeCompare(a.name);
-
-      default:
-        return 0;
+  const fetchProblems = async () => {
+    try {
+      const res = await API.get("/problems");
+      setProblems(res.data);
+    } catch (error) {
+      console.log(error);
     }
-  });
+  };
+
+  const addProblem = async (problemData) => {
+    try {
+      await API.post("/problems", {
+        title: problemData.title,
+        difficulty: problemData.difficulty,
+        status: problemData.status,
+        link: problemData.link,
+      });
+
+      fetchProblems();
+      setShowModal(false);
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to add problem");
+    }
+  };
+
+  const updateProblem = async (updatedProblem) => {
+    try {
+      await API.put(`/problems/${updatedProblem._id}`, {
+        title: updatedProblem.title,
+        difficulty: updatedProblem.difficulty,
+        status: updatedProblem.status,
+        link: updatedProblem.link,
+      });
+
+      fetchProblems();
+      setEditingProblem(null);
+      setShowModal(false);
+    } catch (error) {
+      alert(error.response?.data?.message || "Update Failed");
+    }
+  };
+
+  const deleteProblem = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this problem?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await API.delete(`/problems/${id}`);
+      fetchProblems();
+    } catch (error) {
+      alert(error.response?.data?.message || "Delete Failed");
+    }
+  };
+
+  const editProblem = (problem) => {
+    setEditingProblem(problem);
+    setShowModal(true);
+  };
+
+  const filteredProblems = [...problems]
+    .filter((problem) => {
+      const matchesSearch = problem.title
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+      const matchesDifficulty =
+        difficultyFilter === "All" ||
+        problem.difficulty === difficultyFilter;
+
+      return matchesSearch && matchesDifficulty;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "Newest":
+          return new Date(b.createdAt) - new Date(a.createdAt);
+
+        case "Oldest":
+          return new Date(a.createdAt) - new Date(b.createdAt);
+
+        case "A-Z":
+          return a.title.localeCompare(b.title);
+
+        case "Z-A":
+          return b.title.localeCompare(a.title);
+
+        default:
+          return 0;
+      }
+    });
+
   return (
     <MainLayout>
+      <div className="p-4 md:p-8">
 
-      <div className="p-8">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
-        <div className="flex justify-between items-center">
-
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-3xl md:text-4xl font-bold">
             Problems
           </h1>
 
-          <button 
-          onClick={()=>setShowModal(true)}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
-
+          <button
+            onClick={() => {
+              setEditingProblem(null);
+              setShowModal(true);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full md:w-auto"
+          >
             + Add Problem
-
           </button>
 
         </div>
 
-<div className="my-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div className="my-6 flex flex-col lg:flex-row gap-4">
 
-  <input
-    type="text"
-    placeholder="🔍 Search problems..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    className="w-full md:w-96 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
+          <input
+            type="text"
+            placeholder="🔍 Search Problems..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-1 border rounded-lg px-4 py-3"
+          />
 
-  <select
-    value={difficultyFilter}
-    onChange={(e) => setDifficultyFilter(e.target.value)}
-    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  >
-    <option value="All">All Difficulties</option>
-    <option value="Easy">Easy</option>
-    <option value="Medium">Medium</option>
-    <option value="Hard">Hard</option>
-  </select>
+          <select
+            value={difficultyFilter}
+            onChange={(e) => setDifficultyFilter(e.target.value)}
+            className="border rounded-lg px-4 py-3"
+          >
+            <option value="All">All Difficulties</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
 
-  <select
-  value={sortBy}
-  onChange={(e) => setSortBy(e.target.value)}
-  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
->
-  <option value="Newest">Newest First</option>
-  <option value="Oldest">Oldest First</option>
-  <option value="A-Z">Name (A-Z)</option>
-  <option value="Z-A">Name (Z-A)</option>
-</select>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="border rounded-lg px-4 py-3"
+          >
+            <option value="Newest">Newest First</option>
+            <option value="Oldest">Oldest First</option>
+            <option value="A-Z">Name (A-Z)</option>
+            <option value="Z-A">Name (Z-A)</option>
+          </select>
 
-</div>
+        </div>
 
         <ProblemTable
-  problems={filteredProblems}
-  onDelete={deleteProblem}
-  onEdit={editProblem}
-/>
+          problems={filteredProblems}
+          onDelete={deleteProblem}
+          onEdit={editProblem}
+        />
+
         {showModal && (
-            <AddProblemModal
-  onClose={() => {
-    setShowModal(false);
-    setEditingProblem(null);
-  }}
-  onAddProblem={addProblem}
-  onUpdateProblem={updateProblem}
-  editingProblem={editingProblem}
-/>
-    )}
+          <AddProblemModal
+            onClose={() => {
+              setShowModal(false);
+              setEditingProblem(null);
+            }}
+            onAddProblem={addProblem}
+            onUpdateProblem={updateProblem}
+            editingProblem={editingProblem}
+          />
+        )}
 
       </div>
-
     </MainLayout>
   );
 }

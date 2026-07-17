@@ -1,114 +1,143 @@
-import { useState,useEffect } from "react";
-function AddProblemModal({onClose,onAddProblem,onUpdateProblem,editingProblem,}) {
-  const [name, setName] = useState("");
+import { useState, useEffect } from "react";
+
+function AddProblemModal({
+  onClose,
+  onAddProblem,
+  onUpdateProblem,
+  editingProblem,
+}) {
+  const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [status, setStatus] = useState("Solved");
   const [link, setLink] = useState("");
 
   useEffect(() => {
-  if (editingProblem) {
-    setName(editingProblem.name);
-    setDifficulty(editingProblem.difficulty);
-    setStatus(editingProblem.status);
-    setLink(editingProblem.link);
-  } else {
-    setName("");
-    setDifficulty("Easy");
-    setStatus("Solved");
-    setLink("");
-  }
-}, [editingProblem]);
+    if (editingProblem) {
+      setTitle(editingProblem.title);
+      setDifficulty(editingProblem.difficulty);
+      setStatus(editingProblem.status);
+      setLink(editingProblem.link);
+    } else {
+      setTitle("");
+      setDifficulty("Easy");
+      setStatus("Solved");
+      setLink("");
+    }
+  }, [editingProblem]);
 
-   const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const problemData = {
-    name,
-    difficulty,
-    status,
-    link,
+    const problemData = {
+      title,
+      difficulty,
+      status,
+      link,
+    };
+
+    if (editingProblem) {
+      onUpdateProblem({
+        ...editingProblem,
+        ...problemData,
+      });
+    } else {
+      onAddProblem(problemData);
+    }
   };
 
-  if (editingProblem) {
-    onUpdateProblem({
-      ...editingProblem,
-      ...problemData,
-    });
-  } else {
-    onAddProblem(problemData);
-  }
-};
   return (
-    <div className="fixed inset-0 bg-black/40 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
 
-      <div className="bg-white rounded-xl shadow-xl p-8 w-full max-w-md">
-
-        <h2 className="text-2xl font-bold mb-6">
-  {editingProblem ? "Edit Problem" : "Add New Problem"}
-</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          {editingProblem ? "Edit Problem" : "Add New Problem"}
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
 
-          <input
-            type="text"
-            placeholder="Problem Name"
-            value={name}
-            onChange={(e)=>setName(e.target.value)}
-            className="w-full border rounded-lg px-4 py-3"
-          />
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Problem Title
+            </label>
 
-          <select 
-          value={difficulty}
-          onChange={(e)=>setDifficulty(e.target.value)}
-          className="w-full border rounded-lg px-4 py-3">
+            <input
+              type="text"
+              placeholder="e.g. Two Sum"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+              required
+            />
+          </div>
 
-            <option>Easy</option>
-            <option>Medium</option>
-            <option>Hard</option>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Difficulty
+            </label>
 
-          </select>
+            <select
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              <option>Easy</option>
+              <option>Medium</option>
+              <option>Hard</option>
+            </select>
+          </div>
 
-          <select
-          value={status}
-          onChange={(e)=>setStatus(e.target.value)}
-          className="w-full border rounded-lg px-4 py-3">
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Status
+            </label>
 
-            <option>Solved</option>
-            <option>Pending</option>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              <option>Solved</option>
+              <option>Unsolved</option>
+            </select>
+          </div>
 
-          </select>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Problem Link
+            </label>
 
-          <input
-            type="text"
-            placeholder="LeetCode URL"
-            value={link}
-            onChange={(e)=>setLink(e.target.value)}
-            className="w-full border rounded-lg px-4 py-3"
-          />
+            <input
+              type="url"
+              placeholder="https://leetcode.com/problems/..."
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+              required
+            />
+          </div>
 
-          <div className="flex justify-end gap-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
 
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2 border rounded-lg"
+              className="w-full sm:w-auto px-5 py-2 border rounded-lg hover:bg-gray-100"
             >
               Cancel
             </button>
 
             <button
-  type="submit"
-  className="bg-blue-600 text-white px-5 py-2 rounded-lg"
->
-  {editingProblem ? "Update" : "Save"}
-</button>
+              type="submit"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
+            >
+              {editingProblem ? "Update" : "Save"}
+            </button>
 
           </div>
 
         </form>
 
       </div>
-
     </div>
   );
 }
