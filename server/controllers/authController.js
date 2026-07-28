@@ -182,10 +182,20 @@ const changePassword = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
   try {
+    console.log("BODY:", req.body);
+
     const { email } = req.body;
 
-    // Check if user exists
-    const user = await User.findOne({ email });
+    console.log("EMAIL RECEIVED:", email);
+
+    const users = await User.find().select("email");
+    console.log("ALL USERS:", users);
+
+    const user = await User.findOne({
+      email: email.toLowerCase().trim(),
+    });
+
+    console.log("FOUND USER:", user);
 
     if (!user) {
       return res.status(404).json({
@@ -193,6 +203,7 @@ const forgotPassword = async (req, res) => {
       });
     }
 
+    // rest of your code...
     // Generate random token
     const resetToken = crypto.randomBytes(32).toString("hex");
 
