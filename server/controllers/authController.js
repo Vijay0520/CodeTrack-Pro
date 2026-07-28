@@ -81,10 +81,13 @@ const registerUser = async (req, res) => {
       user,
     });
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
+  console.error("REGISTER ERROR:", error);
+
+  res.status(500).json({
+    message: error.message,
+    stack: error.stack,
+  });
+}
 };
 
 const getProfile = async (req, res) => {
