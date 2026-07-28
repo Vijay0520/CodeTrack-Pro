@@ -1,5 +1,6 @@
 import {Routes,Route} from "react-router-dom";
-
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
@@ -10,14 +11,22 @@ import Profile from "../pages/Profile";
 
 function AppRoutes(){
   return(
-  <Routes>
-    <Route path="/" element={<Login/>}/>
-    <Route path="/register" element={<Register/>}/>
-    <Route path="/dashboard" element={<Dashboard/>}/>
-    <Route path="/problems" element={<Problems/>}/>
-    <Route path="/profile" element={<Profile />} />
-    <Route path="*" element={<NotFound/>}/>
-  </Routes>
+ <Routes>
+  <Route path="/" element={<Login />} />
+  <Route path="/register" element={<Register />} />
+  <Route path="/dashboard" element={<Dashboard />} />
+  <Route path="/problems" element={<Problems />} />
+  <Route path="/profile" element={<Profile />} />
+  <Route
+  path="/forgot-password"
+  element={<ForgotPassword />}
+/>
+<Route
+  path="/reset-password/:token"
+  element={<ResetPassword />}
+/>
+  <Route path="*" element={<NotFound />} />
+</Routes>
   );
 }
 export default AppRoutes;
