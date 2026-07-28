@@ -22,7 +22,7 @@ const ResetPassword = () => {
       setLoading(true);
 
       const { data } = await axios.post(
-        `http://localhost:5000/api/auth/reset-password/${token}`,
+        `https://codetrack-pro-backend.onrender.com/api/auth/reset-password/${token}`,
         { password }
       );
 
