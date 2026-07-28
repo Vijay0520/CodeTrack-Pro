@@ -55,10 +55,13 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    console.log("1. Request received");
 
-    // Check if user already exists
+    const { name, email, password } = req.body;
+    console.log("2. Body:", { name, email });
+
     const existingUser = await User.findOne({ email });
+    console.log("3. Existing user checked");
 
     if (existingUser) {
       return res.status(400).json({
@@ -66,28 +69,29 @@ const registerUser = async (req, res) => {
       });
     }
 
-    
+    console.log("4. Before User.create");
 
-
-    // Create new user
     const user = await User.create({
-  name,
-  email,
-  password,
-});
+      name,
+      email,
+      password,
+    });
 
-    res.status(201).json({
+    console.log("5. User created:", user._id);
+
+    return res.status(201).json({
       message: "User Registered Successfully",
       user,
     });
   } catch (error) {
-  console.error("REGISTER ERROR:", error);
+    console.error("REGISTER ERROR");
+    console.error(error);
+    console.error(error.stack);
 
-  res.status(500).json({
-    message: error.message,
-    stack: error.stack,
-  });
-}
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
 };
 
 const getProfile = async (req, res) => {
