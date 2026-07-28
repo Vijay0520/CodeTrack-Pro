@@ -14,6 +14,16 @@ const problemSchema = new mongoose.Schema(
       required: true,
     },
 
+    topic: {
+    type: String,
+    required: true,
+  },
+
+  company: {
+  type: String,
+  default: "",
+},
+
     status: {
       type: String,
       enum: ["Solved", "Unsolved"],
@@ -25,6 +35,36 @@ const problemSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
+    notes: {
+      type: String,
+      default: "",
+    },
+
+    favorite: {
+  type: Boolean,
+  default: false,
+},
+
+revision: {
+  type: Boolean,
+  default: false,
+},
+
+revisionCount: {
+  type: Number,
+  default: 0,
+},
+
+lastRevised: {
+  type: Date,
+  default: null,
+},
+
+solvedAt: {
+  type: Date,
+  default: null,
+},
 
     user: {
       type: mongoose.Schema.Types.ObjectId,

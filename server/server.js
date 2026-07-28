@@ -5,9 +5,15 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 const problemRoutes = require("./routes/problemRoutes");
+const statsRoutes = require("./routes/statsRoutes");
+const badgeRoutes = require("./routes/badgeRoutes");
 
 // Load environment variables
-dotenv.config();
+const path = require("path");
+
+dotenv.config({
+  path: path.join(__dirname, ".env"),
+});
 
 const app = express();
 
@@ -17,6 +23,8 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/problems", problemRoutes);
+app.use("/api/stats", statsRoutes);
+app.use("/api/badges", badgeRoutes);
 
 app.get("/api/profile", authMiddleware, (req, res) => {
   res.status(200).json({
@@ -39,6 +47,7 @@ mongoose
 app.get("/", (req, res) => {
   res.send("CodeTrack-Pro Backend is Running 🚀");
 });
+
 
 const PORT = process.env.PORT || 5000;
 
