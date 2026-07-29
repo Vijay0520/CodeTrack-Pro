@@ -1,9 +1,8 @@
 const nodemailer = require("nodemailer");
 
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS exists:", !!process.env.EMAIL_PASS);
-
 const sendEmail = async (options) => {
+
+
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -14,8 +13,10 @@ const sendEmail = async (options) => {
     },
   });
 
+
   await transporter.verify();
-  console.log("SMTP connection successful");
+
+
 
   const mailOptions = {
     from: `"CodeTrack-Pro" <${process.env.EMAIL_USER}>`,
@@ -24,7 +25,9 @@ const sendEmail = async (options) => {
     text: options.message,
   };
 
-  await transporter.sendMail(mailOptions);
+
+  const info = await transporter.sendMail(mailOptions);
+
 };
 
 module.exports = sendEmail;

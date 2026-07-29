@@ -13,10 +13,12 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
 
-      const { data } = await axios.post(
-        "https://codetrack-pro-backend.onrender.com/api/auth/forgot-password",
-        { email }
-      );
+      const API_URL = import.meta.env.VITE_API_URL;
+
+const { data } = await axios.post(
+  `${API_URL}/api/auth/forgot-password`,
+  { email }
+);
 
       toast.success(data.message);
       setEmail("");

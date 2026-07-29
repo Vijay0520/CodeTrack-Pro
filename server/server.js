@@ -15,6 +15,9 @@ dotenv.config({
   path: path.join(__dirname, ".env"),
 });
 
+console.log("SERVER EMAIL_USER:", process.env.EMAIL_USER);
+console.log("SERVER EMAIL_PASS:", !!process.env.EMAIL_PASS);
+
 const app = express();
 
 // Middleware
@@ -38,7 +41,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB Connected");
-    console.log("Database Name:", mongoose.connection.db.databaseName);
+    
   })
   .catch((err) => {
     console.log("❌ MongoDB Connection Error:", err.message);
@@ -50,22 +53,6 @@ app.get("/", (req, res) => {
 });
 
 const User = require("./models/User");
-
-app.get("/debug-users", async (req, res) => {
-  try {
-    const users = await User.find().select("email");
-
-    res.json({
-      database: mongoose.connection.db.databaseName,
-      count: users.length,
-      users,
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: err.message,
-    });
-  }
-});
 
 
 const PORT = process.env.PORT || 5000;
