@@ -38,6 +38,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB Connected");
+    console.log("Database Name:", mongoose.connection.db.databaseName);
   })
   .catch((err) => {
     console.log("❌ MongoDB Connection Error:", err.message);
@@ -46,6 +47,24 @@ mongoose
 // Test Route
 app.get("/", (req, res) => {
   res.send("CodeTrack-Pro Backend is Running 🚀");
+});
+
+const User = require("./models/User");
+
+app.get("/debug-users", async (req, res) => {
+  try {
+    const users = await User.find().select("email");
+
+    res.json({
+      database: mongoose.connection.db.databaseName,
+      count: users.length,
+      users,
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
+  }
 });
 
 
