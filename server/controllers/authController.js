@@ -4,12 +4,15 @@ const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 
-const loginUser = async (req, res) => {
+  const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
+    console.log("Email:", email);
+
     const user = await User.findOne({ email });
+
+    console.log("User:", user);
 
     if (!user) {
       return res.status(400).json({
@@ -17,9 +20,11 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
 
+    console.log("Password Match:", isMatch);
+
+  
     if (!isMatch) {
       return res.status(400).json({
         message: "Invalid Email or Password",
