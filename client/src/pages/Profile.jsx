@@ -4,6 +4,7 @@ import { FaUserEdit, FaKey } from "react-icons/fa";
 import EditProfileModal from "../components/EditProfileModal";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import toast from "react-hot-toast";
+import MainLayout from "../components/layout/MainLayout";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -54,15 +55,18 @@ const Profile = () => {
 
   if (!user) {
     return (
+      <MainLayout>
       <div className="min-h-screen flex items-center justify-center dark:bg-gray-950">
         <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-300">
           Loading...
         </h2>
       </div>
+      </MainLayout>
     );
   }
 
   return (
+    <MainLayout>
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors duration-300 py-10">
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -190,6 +194,7 @@ const Profile = () => {
 </div>
 
 </div>
+</MainLayout>
   );
 };
 

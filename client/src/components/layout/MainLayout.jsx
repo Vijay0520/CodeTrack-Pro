@@ -3,14 +3,15 @@ import Footer from "./Footer";
 
 function MainLayout({ children }) {
   return (
-    <>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 flex flex-col">
       <Navbar />
 
-      <main className="pt-20">
+      <main className="flex-1 pt-20 px-6 pb-10">
         {children}
-        <Footer />
       </main>
-    </>
+
+      <Footer />
+    </div>
   );
 }
 

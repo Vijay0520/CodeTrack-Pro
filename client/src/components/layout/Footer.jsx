@@ -6,7 +6,7 @@ function Footer() {
       </p>
 
       <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-        Designed & Developed by <span className="font-semibold">Vijaykumar Gouda</span>
+        Designed & Developed by <span className="font-semibold">C Vijay kumar </span>
       </p>
     </footer>
   );
