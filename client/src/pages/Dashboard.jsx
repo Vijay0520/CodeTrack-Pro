@@ -46,6 +46,7 @@ function Dashboard() {
   const solved = problems.filter(
     (problem) => problem.status === "Solved"
   ).length;
+  const hasSolvedProblems = solved > 0;
 
   const easy = problems.filter(
     (problem) => problem.difficulty === "Easy"
@@ -159,42 +160,62 @@ function Dashboard() {
   </p>
 </div>
 </div>
-         <div  className="mt-12 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 text-center">
+         {hasSolvedProblems ? (
+  <>
+    <div className="mt-12 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 text-center">
+      <DashboardCharts problems={problems} />
+    </div>
 
-        {/* Charts */}
-        <DashboardCharts problems={problems} />
-        </div>
-        
-        <div className="mt-10 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6  dark:text-black text-center">
-        <ContributionHeatMap />
-        </div>
-        <div className="mt-10 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6  dark:text-black text-center">
-        <MonthlyChart />
-        </div>
-        <div  className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-center">
-          <div  className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700  dark:text-black p-6">
-          <DifficultyChart />
-          </div>
-          <div  className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700  dark:text-black p-6">
+    <div className="mt-10 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+      <ContributionHeatMap />
+    </div>
+
+    <div className="mt-10 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+      <MonthlyChart />
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+        <DifficultyChart />
+      </div>
+
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
         <TopicChart />
-        </div>
-        <div  className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700  dark:text-black p-6">
-        <CompanyChart />
-        </div>
-        <div  className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 dark:text-black p-6">
-        <Last30DaysChart /></div>
-        </div>
-        
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6  dark:text-black text-center">
-        <Achievements />
+      </div>
 
-        
-        
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+        <CompanyChart />
       </div>
+
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Last30DaysChart />
       </div>
+    </div>
+
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+      <Achievements />
+    </div>
+  </>
+) : (
+  <div className="mt-12 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
+    <div className="text-6xl mb-4">📊</div>
+
+    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+      No Analytics Yet
+    </h2>
+
+    <p className="mt-3 text-gray-600 dark:text-gray-400">
+      Solve your first coding problem to unlock charts, heatmaps, achievements,
+      and detailed analytics.
+    </p>
+  </div>)
+}
+</div>
+
      
     </MainLayout>
   );
 }
+
 
 export default Dashboard;
